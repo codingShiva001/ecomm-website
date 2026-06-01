@@ -41,7 +41,20 @@ document.querySelectorAll('nav ul li a, header a.btn-primary').forEach(link => {
     target.scrollIntoView({ behavior: 'smooth' });
   });
 });
+function scrollToCard(card) {
+  if (!card) return;
 
+  const top =
+    card.getBoundingClientRect().top +
+    window.pageYOffset;
+
+  const offset = top - 120;
+
+  window.scrollTo({
+    top: offset,
+    behavior: "smooth"
+  });
+}
 const products = [
   {
     id: 1,
@@ -324,100 +337,78 @@ searchInput.addEventListener("input", () => {
   }
 
 
-   // scroll first matched product
-  const cards =
-    document.querySelectorAll(
-      ".product-card"
-    );
+  // scroll first matched product
+const cards = document.querySelectorAll(".product-card");
 
-  if (
-    filteredProducts.length >= 1
-  ) {
+if (filteredProducts.length >= 1) {
 
-    const card = cards[0];
-if (window.innerWidth > 768){
+  const card = cards[0];
+
+  if (window.innerWidth > 768) {
+
     setTimeout(() => {
 
-      card.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+      scrollToCard(card);
 
-      card.classList.add(
-        "highlight"
-      );
+      if (card) {
+        card.classList.add("highlight");
+
+        setTimeout(() => {
+          card.classList.remove("highlight");
+        }, 1000);
+      }
+
+    }, 150);
+
+  }
+}
+
+
+// clear old suggestions
+suggestionsBox.innerHTML = "";
+
+
+// create suggestions
+filteredProducts.forEach(product => {
+
+  const div = document.createElement("div");
+
+  div.classList.add("suggestion-item");
+
+  div.textContent = product.name;
+
+  div.addEventListener("click", () => {
+
+    searchInput.value = product.name;
+
+    displayProducts([product]);
+
+    suggestionsBox.style.display = "none";
+
+    setTimeout(() => {
+
+      const card = document.querySelector(".product-card");
+
+      if (!card) return;
+
+      scrollToCard(card);
+
+      card.classList.add("highlight");
 
       setTimeout(() => {
-        card.classList.remove(
-          "highlight"
-        );
+        card.classList.remove("highlight");
       }, 1000);
 
     }, 150);
-  }
-  }
-
-
-  // clear old suggestions
-  suggestionsBox.innerHTML = "";
-
-
-  // create suggestions
-  filteredProducts.forEach(product => {
-
-    const div =
-      document.createElement("div");
-
-    div.classList.add(
-      "suggestion-item"
-    );
-
-    div.textContent =
-      product.name;
-
-    div.addEventListener(
-      "click", () => {
-
-        searchInput.value =
-          product.name;
-
-        displayProducts(
-          [product]
-        );
-
-        suggestionsBox.style.display =
-          "none";
-
-        const card =
-          document.querySelector(
-            ".product-card"
-          );
-
-        setTimeout(() => {
-
-          card.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-
-          card.classList.add(
-            "highlight"
-          );
-
-          setTimeout(() => {
-            card.classList.remove(
-              "highlight"
-            );
-          }, 1000);
-
-        }, 150);
-
-      });
-
-    suggestionsBox.appendChild(div);
 
   });
 
+  suggestionsBox.appendChild(div);
+
+});
+
+suggestionsBox.style.display =
+  filteredProducts.length ? "block" : "none";
 
   suggestionsBox.style.display =
     filteredProducts.length
