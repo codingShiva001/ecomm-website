@@ -92,6 +92,23 @@ const products = [
     image: "images/shelves.jpg"
   }
 ];
+function scrollToCard(card) {
+  if (!card) return;
+
+  const y =
+    card.getBoundingClientRect().top +
+    window.pageYOffset;
+
+  const offset =
+    y -
+    (window.innerHeight / 2) +
+    (card.offsetHeight / 2);
+
+  window.scrollTo({
+    top: offset,
+    behavior: "smooth"
+  });
+}
 
 const productGrid = document.getElementById("productGrid");
 
@@ -324,7 +341,7 @@ searchInput.addEventListener("input", () => {
   }
 
 
-  // scroll first matched product
+   // scroll first matched product
   const cards =
     document.querySelectorAll(
       ".product-card"
@@ -335,104 +352,116 @@ searchInput.addEventListener("input", () => {
   ) {
 
     const card = cards[0];
-if (window.innerWidth > 768) {
+if (window.innerWidth > 768){
+    setTimeout(() => {
 
-  setTimeout(() => {
+      card.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
 
-    card.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+      card.classList.add(
+        "highlight"
+      );
 
-  }, 150);
+      setTimeout(() => {
+        card.classList.remove(
+          "highlight"
+        );
+      }, 1000);
 
-} else {
-
-  setTimeout(() => {
-
-    const y =
-      card.getBoundingClientRect().top +
-      window.pageYOffset -
-      90;
-
-    window.scrollTo({
-      top: y,
-      behavior: "smooth"
-    });
-
-  }, 150);
-
-}
+    }, 150);
+  }
   }
 
 
-  // clear old suggestions
-  suggestionsBox.innerHTML = "";
+  // scroll first matched product
+const cards = document.querySelectorAll(".product-card");
 
+if (filteredProducts.length >= 1) {
 
-  // create suggestions
-  filteredProducts.forEach(product => {
+  const card = cards[0];
 
-    const div =
-      document.createElement("div");
+  if (window.innerWidth > 768) {
 
-    div.classList.add(
-      "suggestion-item"
-    );
+    setTimeout(() => {
 
-    div.textContent =
-      product.name;
+      const rect = card.getBoundingClientRect();
+      const absoluteY = rect.top + window.pageYOffset;
 
-    div.addEventListener(
-      "click", () => {
+      const offset = absoluteY - 120;
 
-        searchInput.value =
-          product.name;
-
-        displayProducts(
-          [product]
-        );
-
-        suggestionsBox.style.display =
-          "none";
-
-        const card =
-          document.querySelector(
-            ".product-card"
-          );
-
-        setTimeout(() => {
-
-          card.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-
-          card.classList.add(
-            "highlight"
-          );
-
-          setTimeout(() => {
-            card.classList.remove(
-              "highlight"
-            );
-          }, 1000);
-
-        }, 150);
-
+      window.scrollTo({
+        top: offset,
+        behavior: "smooth"
       });
 
-    suggestionsBox.appendChild(div);
+      card.classList.add("highlight");
+
+      setTimeout(() => {
+        card.classList.remove("highlight");
+      }, 1000);
+
+    }, 150);
+
+  }
+}
+
+
+// clear old suggestions
+suggestionsBox.innerHTML = "";
+
+
+// create suggestions
+filteredProducts.forEach(product => {
+
+  const div = document.createElement("div");
+
+  div.classList.add("suggestion-item");
+
+  div.textContent = product.name;
+
+  div.addEventListener("click", () => {
+
+    searchInput.value = product.name;
+
+    displayProducts([product]);
+
+    suggestionsBox.style.display = "none";
+
+    setTimeout(() => {
+
+      const card = document.querySelector(".product-card");
+
+      if (!card) return;
+
+      const rect = card.getBoundingClientRect();
+      const absoluteY = rect.top + window.pageYOffset;
+
+      const offset = absoluteY - 120;
+
+      window.scrollTo({
+        top: offset,
+        behavior: "smooth"
+      });
+
+      card.classList.add("highlight");
+
+      setTimeout(() => {
+        card.classList.remove("highlight");
+      }, 1000);
+
+    }, 150);
 
   });
 
-
-  suggestionsBox.style.display =
-    filteredProducts.length
-      ? "block"
-      : "none";
+  suggestionsBox.appendChild(div);
 
 });
+
+
+suggestionsBox.style.display =
+  filteredProducts.length ? "block" : "none";
 clearSearch.addEventListener("click", () => {
 
   searchInput.value = "";
