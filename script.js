@@ -335,26 +335,34 @@ searchInput.addEventListener("input", () => {
   ) {
 
     const card = cards[0];
-if (window.innerWidth > 768){
-    setTimeout(() => {
+if (window.innerWidth > 768) {
 
-      card.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
+  setTimeout(() => {
 
-      card.classList.add(
-        "highlight"
-      );
+    card.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
 
-      setTimeout(() => {
-        card.classList.remove(
-          "highlight"
-        );
-      }, 1000);
+  }, 150);
 
-    }, 150);
-  }
+} else {
+
+  setTimeout(() => {
+
+    const y =
+      card.getBoundingClientRect().top +
+      window.pageYOffset -
+      90;
+
+    window.scrollTo({
+      top: y,
+      behavior: "smooth"
+    });
+
+  }, 150);
+
+}
   }
 
 
